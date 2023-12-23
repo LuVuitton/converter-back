@@ -30,5 +30,5 @@ export class History {
   user: Users;
 
   @CreateDateColumn({ type: 'timestamp' })
-  userRegistrationDate: Date;
+  historyCreationDate: Date;
 }

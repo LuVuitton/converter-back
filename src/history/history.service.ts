@@ -62,6 +62,7 @@ export class HistoryService {
       await this.historyRepository.remove(history);
       return {
         userID: user.userID,
+        historyItemID,
         message: `History #${historyItemID} has been removed`,
       };
     } catch (error) {
