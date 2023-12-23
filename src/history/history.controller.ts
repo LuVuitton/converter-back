@@ -28,8 +28,9 @@ export class HistoryController {
     return this.historyService.create(createHistoryDto, req.user);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.historyService.remove(+id);
+  remove(@Param('id') id: string, @Request() req) {
+    return this.historyService.remove(+id, req.user);
   }
 }

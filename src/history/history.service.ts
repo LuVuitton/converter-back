@@ -27,14 +27,7 @@ export class HistoryService {
   }
 
   async findAll(user: User) {
-    console.log(user.userID);
-
     try {
-      // const histories = await this.historyRepository.find({
-      //   // where: { user: user.userID },
-      //   where: { userID: user.userID },
-      // });
-
       const histories = await this.historyRepository
         .createQueryBuilder('history')
         .where('history.userID = :userID', { userID: user.userID })
@@ -53,7 +46,32 @@ export class HistoryService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} history`;
+  async remove(historyItemID: number, user: User) {
+    try {
+      const history = await this.historyRepository.findOne({
+        where: { historyItemID, user: { userID: user.userID } },
+      });
+
+      if (!history) {
+        throw new HttpException(
+          'History not found or does not belong to the user',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      await this.historyRepository.remove(history);
+      return {
+        userID: user.userID,
+        message: `History #${historyItemID} has been removed`,
+      };
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(
+        'Failed to remove history entry',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
